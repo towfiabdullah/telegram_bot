@@ -1,24 +1,17 @@
 {
-  "name": "telegram_bot",
+  "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A Telegram bot to send notifications for problem-solving reminders.",
+  "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/faisal-titu/telegram_bot.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/faisal-titu/telegram_bot/issues"
-  },
-  "homepage": "https://github.com/faisal-titu/telegram_bot#readme",
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "node-telegram-bot-api": "^0.66.0"
-  }
+    "node-telegram-bot-api": "^0.57.0",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {},
+  "keywords": ["telegram", "bot", "notifications"],
+  "author": "Your Name",
+  "license": "MIT"
 }
