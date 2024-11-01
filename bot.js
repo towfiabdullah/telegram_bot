@@ -9,6 +9,13 @@ const bot = new TelegramBot(process.env.BOT_TOKEN);
 // Array to hold chat IDs of users who have interacted with the bot
 let chatIds = [];
 
+// Array of problem links
+const problems = [
+    "https://leetcode.com/problems/two-sum/",
+    "https://codeforces.com/problemset/problem/1/A",
+    "https://www.hackerrank.com/challenges/solve-me-first"
+];
+
 // Middleware to parse incoming requests
 app.use(bodyParser.json());
 
