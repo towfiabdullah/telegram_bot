@@ -1,17 +1,13 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "A Telegram bot to send notifications for problem-solving reminders.",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.57.0",
-    "dotenv": "^10.0.0"
-  },
-  "devDependencies": {},
-  "keywords": ["telegram", "bot", "notifications"],
-  "author": "Your Name",
-  "license": "MIT"
+    "express": "^4.18.2",
+    "node-telegram-bot-api": "^0.59.0",
+    "dotenv": "^16.0.3"
+  }
 }

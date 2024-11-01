@@ -1,9 +1,10 @@
+const express = require('express');
+const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
-const botToken = process.env.BOT_TOKEN; // Set this in Vercel later
-const chatId = process.env.CHAT_ID;     // Set this in Vercel later
 
-const bot = new TelegramBot(botToken, { polling: true });
+const app = express();
+const bot = new TelegramBot(process.env.BOT_TOKEN);
 
 const problems = [
     "https://leetcode.com/problems/two-sum/",
@@ -11,9 +12,29 @@ const problems = [
     "https://www.hackerrank.com/challenges/solve-me-first"
 ];
 
-const sendNotification = () => {
-    const message = `Reminder: Solve at least 2 problems today!\n${problems.slice(0, 2).join('\n')}`;
-    bot.sendMessage(chatId, message);
-};
+// Middleware to parse incoming requests
+app.use(bodyParser.json());
 
-setInterval(sendNotification, 30000);
+// Webhook endpoint
+app.post('/webhook', (req, res) => {
+    const chatId = req.body.message.chat.id;
+
+    // Send a reminder every 30 seconds
+    setInterval(() => {
+        const message = `Reminder: Solve at least 2 problems today!\n${problems.slice(0, 2).join('\n')}`;
+        bot.sendMessage(chatId, message).catch(error => {
+            console.error('Error sending message:', error);
+        });
+    }, 30000);
+
+    res.sendStatus(200);
+});
+
+// Set webhook URL
+bot.setWebHook(`${process.env.VERCEL_URL}/webhook`);
+
+// Start the Express server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
