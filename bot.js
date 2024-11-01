@@ -12,6 +12,19 @@ let chatIds = [];
 // Middleware to parse incoming requests
 app.use(bodyParser.json());
 
+// Send a reminder to all users every 30 seconds
+const sendReminders = () => {
+    const message = `Reminder: Solve at least 2 problems today!\n${problems.slice(0, 2).join('\n')}`;
+    chatIds.forEach(id => {
+        bot.sendMessage(id, message).catch(error => {
+            console.error('Error sending message:', error);
+        });
+    });
+};
+
+// Start sending reminders every 30 seconds
+setInterval(sendReminders, 30000);
+
 // Webhook endpoint
 app.post('/webhook', (req, res) => {
     const chatId = req.body.message.chat.id;
@@ -20,16 +33,6 @@ app.post('/webhook', (req, res) => {
     if (!chatIds.includes(chatId)) {
         chatIds.push(chatId);
     }
-
-    // Send a reminder to all users every 30 seconds
-    setInterval(() => {
-        const message = `Reminder: Solve at least 2 problems today!\n${problems.slice(0, 2).join('\n')}`;
-        chatIds.forEach(id => {
-            bot.sendMessage(id, message).catch(error => {
-                console.error('Error sending message:', error);
-            });
-        });
-    }, 30000);
 
     res.sendStatus(200);
 });
