@@ -30,6 +30,14 @@ app.post('/webhook', (req, res) => {
     res.sendStatus(200);
 });
 
+
+// GET endpoint for root
+app.get('/', (req, res) => {
+    res.send('Welcome to the Telegram Bot API!'); // or any message you prefer
+});
+
+
+
 // Set webhook URL
 bot.setWebHook(`${process.env.VERCEL_URL}/webhook`);
 
