@@ -7,19 +7,30 @@ require('dotenv').config();
 const app = express();
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-// Array of problem links
-const problems = [
-  "https://leetcode.com/problems/two-sum/",
-  "https://codeforces.com/problemset/problem/1/A",
-  "https://www.hackerrank.com/challenges/solve-me-first"
-];
-
 // Middleware to parse incoming JSON requests
 app.use(bodyParser.json());
 
 // Path to the JSON file that stores chat IDs
 const chatFilePath = './chat_ids.json';
 
+// Path to the text file with problem links
+const problemsFilePath = './problems.txt';
+
+// Array to store problem links loaded from the file
+let problems = [];
+let problemIndex = 0; // Track the next problem to send
+
+// Load problems from the text file
+const loadProblems = () => {
+  try {
+    const data = fs.readFileSync(problemsFilePath, 'utf-8');
+    problems = data.trim().split('\n').filter(line => line); // Each line is a problem link
+  } catch (error) {
+    console.error('Error loading problems:', error);
+  }
+};
+
+// Function to load chat IDs from JSON
 const loadChatIds = () => {
   if (!fs.existsSync(chatFilePath)) {
     fs.writeFileSync(chatFilePath, JSON.stringify([]));
@@ -27,11 +38,7 @@ const loadChatIds = () => {
   }
 
   const data = fs.readFileSync(chatFilePath, 'utf-8');
-  if (data.trim() === '') {
-    return [];
-  }
-
-  return JSON.parse(data);
+  return data.trim() ? JSON.parse(data) : [];
 };
 
 // Function to save chat IDs to the JSON file
@@ -39,13 +46,23 @@ const saveChatIds = (chatIds) => {
   fs.writeFileSync(chatFilePath, JSON.stringify(chatIds, null, 2));
 };
 
-// Function to send reminders to all users
+// Function to send reminders with the next two problems
 const sendReminders = () => {
   console.log("Fetching users for sending reminders...");
   const chatIds = loadChatIds();
   console.log(`Found ${chatIds.length} users in the JSON file.`);
 
-  const message = `Reminder: Solve at least 2 problems today!\n${problems.slice(0, 2).join('\n')}`;
+  // Select the next two problems without repetition
+  const selectedProblems = [];
+  for (let i = 0; i < 2; i++) {
+    if (problemIndex >= problems.length) {
+      problemIndex = 0; // Reset index if we've reached the end
+    }
+    selectedProblems.push(problems[problemIndex]);
+    problemIndex++;
+  }
+
+  const message = `Reminder: Solve at least 2 problems today!\n${selectedProblems.join('\n')}`;
   chatIds.forEach(chatId => {
     console.log(`Sending message to user with chat ID: ${chatId}`);
     bot.sendMessage(chatId, message).catch(error => {
@@ -53,6 +70,9 @@ const sendReminders = () => {
     });
   });
 };
+
+// Load problems from file at startup
+loadProblems();
 
 // Send reminders every 30 seconds
 setInterval(() => {
