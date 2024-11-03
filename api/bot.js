@@ -106,7 +106,7 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
 
   // Set webhook for Telegram
-  const url = `${process.env.VERCEL_URL}/webhook`;
+  const url = `${process.env.VERCEL_URL || `http://localhost:${PORT}`}/api/webhook`;
   await bot.setWebHook(url);
   console.log(`Webhook set to ${url}`);
 });
